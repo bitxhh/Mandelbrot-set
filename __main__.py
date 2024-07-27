@@ -14,24 +14,25 @@ texture = pygame.image.load('gr.webp')
 texture_size = min(texture.get_size()) - 1
 texture_array = pygame.surfarray.array3d(texture).astype(dtype=np.uint32)
 
+
 @ti.data_oriented
 class Fractal:
     def __init__(self, aapp):
         self.app = aapp
         self.screen_array = numpy.full((width, height, 3), [0, 0, 0], dtype=numpy.uint32)
-        #taichi arch
+        # taichi arch
         ti.init(arch=ti.cuda)
-        #taichi fields
+        # taichi fields
         self.screen_field = ti.Vector.field(3, ti.uint32, (width, height))
         self.texture_field = ti.Vector.field(3, ti.uint32, texture.get_size())
         self.texture_field.from_numpy(texture_array)
-        #settings
+        # settings
         self.vel = 0.01
         self.zoom, self.scale = 2.2 / height, 0.993
         self.increment = ti.Vector([0.0, 0.0])
         self.max_iter, self.max_iter_limit = 30, 5500
-        #d-time
-        self.app_speed = 1/4000
+        # d-time
+        self.app_speed = 1 / 4000
         self.prev_time = pygame.time.get_ticks()
 
     def delta_time(self):
@@ -79,7 +80,6 @@ class Fractal:
         if pressed_keys[pygame.K_RIGHT]:
             self.max_iter += 1
         self.max_iter = min(max(self.max_iter, 2), self.max_iter_limit)
-
 
     def update(self):
         self.controls()
